@@ -1,0 +1,24 @@
+from flask import Flask, jsonify, request, Response, json
+from instance.config import app_config
+
+def create_app(config_name):
+
+  from app.models import questions
+  app = Flask(__name__, instance_relative_config=True)
+
+  #Fetch a specific question
+  @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
+  def get_a_question(questionId):
+    for question in questions:
+      results = []
+      if question['questionId'] == questionId:
+        results.append(
+          question['question']
+        )
+        return jsonify(results) 
+      else:
+        msg = "question is not in the database" 
+        return msg
+ 
+      
+  return app
