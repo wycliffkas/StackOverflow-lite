@@ -24,8 +24,29 @@ def create_app():
    
 
   #Add a question
+  @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
   def add_question():
-    pass
+    request_data  = request.get_json()
+    if (valid_question(request_data)):
+      question_id = questions[-1]['questionId'] + 1
+      question = {
+          'questionId': question_id,
+          'question': request_data['question'],
+          'description': request_data['description'],
+          'answers': []
+
+      }
+      questions.append(question)
+      return Response(json.dumps(question), 201, mimetype="application/json")
+        
+    
+    bad_object = {
+        "error": "Invalid question object",
+        "help_string":
+            "Request format should be {'question': 'Error 500',"
+            "'description': 'i keep getting 500 error when i reload my page'}"
+    }
+    return Response(json.dumps(bad_object), status=400, mimetype="application/json") 
         
 
   #Add an answer
