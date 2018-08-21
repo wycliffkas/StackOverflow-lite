@@ -76,5 +76,5 @@ def create_app():
       }
       return Response(json.dumps(bad_object), status=400, mimetype="application/json")
 
-
   return app
+
