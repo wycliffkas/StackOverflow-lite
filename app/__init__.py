@@ -10,8 +10,6 @@ def create_app():
     if request.method == 'GET':
       return jsonify({'questions': questions})
     
-
-
   #Fetch a specific question
   @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET','POST'])
   def get_a_question(questionId):
