@@ -11,8 +11,16 @@ def create_app():
 
 
   #Fetch a specific question
+  @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
   def get_a_question(questionId):
-    pass
+
+    for item in questions:
+      if item['questionId'] == questionId:
+        question ={
+          'questionId': item['questionId'],
+          'question': item['question']
+        }
+    return jsonify(question)
    
 
   #Add a question
