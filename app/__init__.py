@@ -67,14 +67,12 @@ def create_app():
 
         update_question(questionId, question)
         return Response(json.dumps(answer), 201, mimetype="application/json") 
-
-      else:
-        bad_object = {
-            "error": "Invalid answer object",
-            "help_string":
-                "Request format should be {'answer': 'the server is down'}"
-        }
-        return Response(json.dumps(bad_object), status=400, mimetype="application/json")
+      bad_object = {
+          "error": "Invalid answer object",
+          "help_string":
+              "Request format should be {'answer': 'the server is down'}"
+      }
+      return Response(json.dumps(bad_object), status=400, mimetype="application/json")
 
 
   return app
