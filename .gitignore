@@ -8,10 +8,9 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
 build/
 develop-eggs/
-dist/
+#dist/
 downloads/
 eggs/
 .eggs/
@@ -79,11 +78,10 @@ celerybeat-schedule
 # SageMath parsed files
 *.sage.py
 
-# dotenv
+# Environments
 .env
-
-# virtualenv
 .venv
+env/
 venv/
 ENV/
 
@@ -99,9 +97,3 @@ ENV/
 
 # mypy
 .mypy_cache/
-
-# Mac stuff
-*.DS_Store
-
-# virtualenv
-*buckei
