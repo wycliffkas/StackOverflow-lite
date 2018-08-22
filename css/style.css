@@ -5,7 +5,10 @@ body{
     background-color: #ffffff;
 }
 
-/*all containers*/
+*:focus{
+    outline: none;
+}
+
 .container{
     width: 80%;
     margin: auto;
