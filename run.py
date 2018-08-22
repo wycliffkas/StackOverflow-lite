@@ -1,5 +1,14 @@
+"""
+This file defines an entry point to start our app
+"""
+import os
 from app import create_app
-app = create_app()
-if __name__ == '__main__':
-    app.run(debug=True)
+from flask_restful import Api
 
+configuration = os.getenv('APP_SETTINGS')    # configuration = 'development'
+app = create_app(configuration)
+
+
+if __name__ == '__main__':
+    app.run()
+ 
