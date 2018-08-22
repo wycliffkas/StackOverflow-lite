@@ -29,7 +29,7 @@ header{
 
 nav a {
     float: left;
-    font-size: 18px;
+    font-size: 17px;
     color: white;
     text-align: center;
     padding: 25px 15px;
@@ -40,7 +40,7 @@ nav a {
     float: left;
     overflow: hidden;
     margin: auto;
-    padding: 0 140px 0 20px;
+    padding: 0 50px 0 0px;
 }
 
 
