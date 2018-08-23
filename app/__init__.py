@@ -1,12 +1,53 @@
-from flask import Flask, jsonify, request, Response, json
+from flask import Flask,jsonify,request,Response,json
+from app.models import *
 
-# from instance.config import app_config
-from instance.config import app_config
+def create_app():
+  app = Flask(__name__)
 
-def create_app(config_name):
+  # Fetch all questions
+  @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
+  def get_questions():
+    return jsonify({'questions': questions})  
 
-  from app.models import find_question,valid_answer,update_question
-  app = Flask(__name__,instance_relative_config=True)
+
+  #Fetch a specific question
+  @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
+  def get_a_question(questionId):
+
+    for item in questions:
+      if item['questionId'] == questionId:
+        question ={
+          'questionId': item['questionId'],
+          'question': item['question']
+        }
+    return jsonify(question)
+   
+
+  #Add a question
+  @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
+  def add_question():
+    request_data  = request.get_json()
+    if (valid_question(request_data)):
+      question_id = questions[-1]['questionId'] + 1
+      question = {
+          'questionId': question_id,
+          'question': request_data['question'],
+          'description': request_data['description'],
+          'answers': []
+
+      }
+      questions.append(question)
+      return Response(json.dumps(question), 201, mimetype="application/json")
+        
+    
+    bad_object = {
+        "error": "Invalid question object",
+        "help_string":
+            "Request format should be {'question': 'Error 500',"
+            "'description': 'i keep getting 500 error when i reload my page'}"
+    }
+    return Response(json.dumps(bad_object), status=400, mimetype="application/json") 
+        
 
   #Add an answer
   @app.route('/stack_overflow/api/v1/questions/<int:questionId>/answers', methods=['POST']) 
@@ -15,8 +56,7 @@ def create_app(config_name):
     question = find_question(questionId)
 
     if valid_answer(request_data) and question:
-      answerId = len(question['answers']) + 1
-      
+      answerId = question['answers'][-1]['answerId'] + 1
       answer = {
           'answerId': answerId,
           'questionId': questionId,
@@ -35,5 +75,5 @@ def create_app(config_name):
               "Request format should be {'answer': 'the server is down'}"
       }
       return Response(json.dumps(bad_object), status=400, mimetype="application/json")
-      
+
   return app
