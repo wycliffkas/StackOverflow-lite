@@ -9,7 +9,6 @@ configparser==3.5.0
 enum34==1.1.6
 Flask==1.0.2
 funcsigs==1.0.2
-futures==3.2.0
 isort==4.3.4
 itsdangerous==0.24
 Jinja2==2.10
@@ -23,7 +22,6 @@ py==1.5.4
 pycodestyle==2.4.0
 pylint==1.9.3
 pytest==3.7.2
-Python==2.7.13
 scandir==1.9.0
 singledispatch==3.4.0.3
 six==1.11.0
