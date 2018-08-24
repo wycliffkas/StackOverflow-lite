@@ -39,21 +39,21 @@ def create_app():
     # Add an answer
     @app.route('/stack_overflow/api/v1/questions/<int:questionId>/answers', methods=['POST'])
     def add_answer(questionId):
-        request_data = request.get_json()
+      request_data = request.get_json()
 
-        if not request_data:
-            return jsonify({"error": "application expects json object"}), 400
+      if not request_data:
+          return jsonify({"error": "application expects json object"}), 400
 
-        for question in questions:
-            if question.get('questionId') == questionId:
-								answerId = question['answers'][-1].get('answerId') + 1
-								answer = {
-										'answerId': answerId,
-										'questionId': questionId,
-										'answer': request_data.get('answer')
-								}
-								question['answers'].append(answer)
-								return Response(json.dumps(answer), 201, mimetype="application/json")
-        return jsonify({"error": "question doesn't exist"}), 404
+      for question in questions:
+        if question.get('questionId') == questionId:
+          answerId = question['answers'][-1].get('answerId') + 1
+          answer = {
+                  'answerId': answerId,
+                  'questionId': questionId,
+                  'answer': request_data.get('answer')
+          }
+          question['answers'].append(answer)
+          return Response(json.dumps(answer), 201, mimetype="application/json")
+      return jsonify({"error": "question doesn't exist"}), 404
 
     return app
