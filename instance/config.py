@@ -1,6 +1,6 @@
 class Config(object):
     """Parent configuration class."""
-    DEBUG = False
+    DEBUG = True
     
 
 class DevelopmentConfig(Config):

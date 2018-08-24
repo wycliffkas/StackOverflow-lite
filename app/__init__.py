@@ -1,79 +1,59 @@
-from flask import Flask,jsonify,request,Response,json
-from app.models import *
+from flask import Flask, jsonify, request, Response, json
+from app.models import questions
+
 
 def create_app():
-  app = Flask(__name__)
+    app = Flask(__name__)
 
-  # Fetch all questions
-  @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
-  def get_questions():
-    return jsonify({'questions': questions})  
+    # Fetch all questions
+    @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
+    def get_questions():
+        return jsonify({'questions': questions})
 
+    # Fetch a specific question
+    @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
+    def get_a_question(questionId):
+        for question in questions:
+            if question.get('questionId') == questionId:
+                return jsonify({"question": question})
+        return jsonify({"error": "Question Not Found"}), 404
 
-  #Fetch a specific question
-  @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
-  def get_a_question(questionId):
+    #adding a question
+    @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
+    def add_question():
+        request_data = request.get_json()
+        if not request_data:
+            return jsonify({"error": "application expects json object"}), 400
 
-    for item in questions:
-      if item['questionId'] == questionId:
-        question ={
-          'questionId': item['questionId'],
-          'question': item['question']
+				 
+        question_id = questions[-1].get('questionId') + 1
+        question = {
+            'questionId': question_id,
+            'question': request_data.get('question'),
+            'description': request_data.get('description'),						
+            'answers': []
         }
-    return jsonify(question)
-   
+        questions.append(question)
+        return Response(json.dumps(question), 201, mimetype="application/json")
 
-  #Add a question
-  @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
-  def add_question():
-    request_data  = request.get_json()
-    if (valid_question(request_data)):
-      question_id = questions[-1]['questionId'] + 1
-      question = {
-          'questionId': question_id,
-          'question': request_data['question'],
-          'description': request_data['description'],
-          'answers': []
+    # Add an answer
+    @app.route('/stack_overflow/api/v1/questions/<int:questionId>/answers', methods=['POST'])
+    def add_answer(questionId):
+        request_data = request.get_json()
 
-      }
-      questions.append(question)
-      return Response(json.dumps(question), 201, mimetype="application/json")
-        
-    
-    bad_object = {
-        "error": "Invalid question object",
-        "help_string":
-            "Request format should be {'question': 'Error 500',"
-            "'description': 'i keep getting 500 error when i reload my page'}"
-    }
-    return Response(json.dumps(bad_object), status=400, mimetype="application/json") 
-        
+        if not request_data:
+            return jsonify({"error": "application expects json object"}), 400
 
-  #Add an answer
-  @app.route('/stack_overflow/api/v1/questions/<int:questionId>/answers', methods=['POST']) 
-  def add_answer(questionId):
-    request_data  = request.get_json()
-    question = find_question(questionId)
+        for question in questions:
+            if question.get('questionId') == questionId:
+								answerId = question['answers'][-1].get('answerId') + 1
+								answer = {
+										'answerId': answerId,
+										'questionId': questionId,
+										'answer': request_data.get('answer')
+								}
+								question['answers'].append(answer)
+								return Response(json.dumps(answer), 201, mimetype="application/json")
+        return jsonify({"error": "question doesn't exist"}), 404
 
-    if valid_answer(request_data) and question:
-      answerId = question['answers'][-1]['answerId'] + 1
-      answer = {
-          'answerId': answerId,
-          'questionId': questionId,
-          'answer': request_data['answer'],
-
-      }
-      question['answers'].append(answer)
-
-      update_question(questionId, question)
-      return Response(json.dumps(answer), 201, mimetype="application/json") 
-
-    else:
-      bad_object = {
-          "error": "Invalid answer object",
-          "help_string":
-              "Request format should be {'answer': 'the server is down'}"
-      }
-      return Response(json.dumps(bad_object), status=400, mimetype="application/json")
-
-  return app
+    return app
