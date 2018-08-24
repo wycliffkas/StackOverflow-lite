@@ -9,7 +9,6 @@ def create_app():
   def get_questions():
     return jsonify({'questions': questions})  
 
-
   #Fetch a specific question
   def get_a_question(questionId):
     pass
