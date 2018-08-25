@@ -46,14 +46,24 @@ def create_app():
 
       for question in questions:
         if question.get('questionId') == questionId:
-          answerId = question['answers'][-1].get('answerId') + 1
-          answer = {
-                  'answerId': answerId,
-                  'questionId': questionId,
-                  'answer': request_data.get('answer')
-          }
-          question['answers'].append(answer)
-          return Response(json.dumps(answer), 201, mimetype="application/json")
+          if not question['answers']:
+            answerId = 1
+            answer = {
+                    'answerId': answerId,
+                    'questionId': questionId,
+                    'answer': request_data.get('answer')
+            }
+            question['answers'].append(answer)
+            return Response(json.dumps(answer), 201, mimetype="application/json")            
+          else:
+            answerId = question['answers'][-1].get('answerId') + 1
+            answer = {
+                    'answerId': answerId,
+                    'questionId': questionId,
+                    'answer': request_data.get('answer')
+            }
+            question['answers'].append(answer)
+            return Response(json.dumps(answer), 201, mimetype="application/json")
       return jsonify({"error": "question doesn't exist"}), 404
 
     return app
