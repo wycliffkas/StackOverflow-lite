@@ -7,7 +7,7 @@ install:
   - pip install -r requirements.txt
 
 script:
-  - pytest --cov -v --cov-report term-missing
+  - py.test --cov-report term-missing --cov app -v
 
 
 after_success:
