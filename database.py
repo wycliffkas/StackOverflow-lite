@@ -94,7 +94,7 @@ class Database(object):
         # self.connection.close() 
 
 
-    #inserts questions into the database
+    #deletes questions from the database
     def delete_question(self,questionId):
         query = "SELECT * FROM questions where questionId = %s"
         self.cursor.execute(query,[questionId])
