@@ -109,12 +109,20 @@ def add_answer(questionId):
 
 
 # update answer or accept an answer
-@app.route('/stack_overflow/api/v1/questions/<questionId>/answers/<answerId>', methods=['POST'])
+@app.route('/stack_overflow/api/v1/questions/<questionId>/answers/<answerId>', methods=['PUT'])
 @jwt_required
 def update_answer(questionId,answerId):
     request_data = request.get_json()
     answer = request_data['answer']
     return answers_obj.update_answer(questionId,answer,answerId)
+
+@app.errorhandler(400)
+def missing_values(e):
+    return jsonify("Invalid values posted, please make sure you have added all the fields"), 400
+
+@app.errorhandler(404)
+def values_not_found(e):
+    return jsonify("Invalid values posted, please make sure the Id specified already exists in the database"), 404
 
 
 
