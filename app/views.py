@@ -1,7 +1,11 @@
 from flask import json,jsonify,request,Response
 from .models import Questions,Users,Answers
-
+from flask_jwt_extended import JWTManager,jwt_required,create_access_token,get_jwt_identity
+import datetime
 from app import app
+
+app.config['JWT_SECRET_KEY'] = 'stackoverflowbootcamp'  
+jwt = JWTManager(app)
 
 questions_obj = Questions()
 users_obj = Users()
@@ -24,11 +28,12 @@ def login():
     request_data = request.get_json()
     username = request_data.get('username') 
     password = request_data.get('password')
-    return jsonify(users_obj.login_user(username, password)), 200
+    return users_obj.login_user(username, password)
 
 
 #adding a question
 @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
+@jwt_required
 def add_question():
     request_data = request.get_json()
     
@@ -51,6 +56,7 @@ def add_question():
 
 #fetch all questions
 @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
+@jwt_required
 def get_questions():
     
     if len(questions_obj.fetch_all_questions()) > 0:
@@ -60,6 +66,7 @@ def get_questions():
 
 #fetch a question
 @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
+@jwt_required
 def get_a_question(questionId):
     
     if questions_obj.fetch_a_question(questionId):
@@ -76,16 +83,21 @@ def get_a_question(questionId):
         return jsonify(question),200 
     return jsonify("question with specified the Id doesnt exist"),404
 
+#delete a question
+@app.route('/stack_overflow/api/v1/questions/<questionId>', methods=['POST'])
+@jwt_required
+def delete_question(questionId): 
+    return jsonify(questions_obj.delete_question(questionId)),200 
+
 # Add an answer
-@app.route('/stack_overflow/api/v1/questions/<int:questionId>/answers', methods=['POST'])
+@app.route('/stack_overflow/api/v1/questions/<questionId>/answers', methods=['POST'])
 def add_answer(questionId):
     request_data = request.get_json()
     
-    if request_data.get('answer')  and request_data.get('userId'):
-        questionId = questionId
+    if request_data.get('answer') and request_data.get('userId'):
         answer = request_data['answer']
         userId = request_data['userId']
-        return jsonify(questions_obj.save_answer(questionId,answer,userId)),200 
+        return jsonify(answers_obj.save_answer(questionId,answer,userId)),200 
     else:
         bad_object = {
                 "error": "Invalid answer",
@@ -95,10 +107,18 @@ def add_answer(questionId):
             }
         return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
 
-#delete an answer
-@app.route('/stack_overflow/api/v1/questions/<questionId>', methods=['POST'])
-def delete_question(questionId):
-    return jsonify(questions_obj.delete_question(questionId)),200 
+
+# update answer or accept an answer
+@app.route('/stack_overflow/api/v1/questions/<questionId>/answers/<answerId>', methods=['POST'])
+@jwt_required
+def update_answer(questionId,answerId):
+    request_data = request.get_json()
+    answer = request_data['answer']
+    return answers_obj.update_answer(questionId,answer,answerId)
+
+
+
+
 
 
   
