@@ -1,23 +1,43 @@
 from flask import json,jsonify,request,Response
-from app.models import Questions
+from .models import Questions,Users,Answers
+
 from app import app
 
 questions_obj = Questions()
+users_obj = Users()
+answers_obj = Answers()
 
-@app.route('/', methods=['GET'])
-def welcome():
-    return jsonify('Welcome to the StackOverflow-lite')
+#registering new users
+@app.route('/stack_overflow/api/v1/auth/signup', methods=['POST'])
+def signup():
+    request_data = request.get_json()
+    fullname = request_data.get('fullname') 
+    username = request_data.get('username') 
+    email = request_data.get('email')
+    password = request_data.get('password')
+    results = users_obj.save_users(fullname,username,email,password)
+    return Response(json.dumps(results), 201, mimetype="application/json")
+
+#login users
+@app.route('/stack_overflow/api/v1/auth/login', methods=['POST'])
+def login():
+    request_data = request.get_json()
+    username = request_data.get('username') 
+    password = request_data.get('password')
+    return jsonify(users_obj.login_user(username, password)), 200
+
 
 #adding a question
 @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
 def add_question():
     request_data = request.get_json()
-
+    
     if request_data.get('question')  and request_data.get('description') and request_data.get('userId'):
         question = request_data.get('question') 
         description = request_data.get('description') 
         userId = request_data.get('userId')
-        return Response(json.dumps(questions_obj.save_questions(question,description,userId)), 201, mimetype="application/json") 
+        results = questions_obj.save_questions(question,description,userId)
+        return Response(json.dumps(results), 201, mimetype="application/json") 
     else:
         bad_object = {
                 "error": "Invalid question",
@@ -26,6 +46,8 @@ def add_question():
                     "'description': 'where do i click to start a computer','userId': 123 }"
             }
         return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
+
+        
 
 #fetch all questions
 @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
@@ -41,7 +63,17 @@ def get_questions():
 def get_a_question(questionId):
     
     if questions_obj.fetch_a_question(questionId):
-        return jsonify(questions_obj.fetch_a_question(questionId)),200 
+        results = questions_obj.fetch_a_question(questionId)
+        for question in results:
+            question = {
+                'questionId': question[0],
+                'question' : question[1],
+                'description' : question[2],
+                'userid': question[3],
+                'date_added': question[4]
+                }
+
+        return jsonify(question),200 
     return jsonify("question with specified the Id doesnt exist"),404
 
 # Add an answer
