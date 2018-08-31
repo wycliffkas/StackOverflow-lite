@@ -13,6 +13,9 @@ class Users(object):
         msg = my_database.verify_login(username,password)
         return msg
         
+    def add_user_account(self, fullname,username,email,password):
+        return my_database.save_users_database(fullname,username,email,password)
+
         
 
 class Questions(object):
@@ -36,14 +39,10 @@ class Questions(object):
 
 
     #add questions
-    def save_questions(self,question,description,userId):
-        questions_object = {
-            'question':question,
-            'description': description,
-            'userId':userId,
-            'date_added':self.date_added}
-        my_database.insert_questions_database(question,description,userId,self.date_added)
-        return questions_object
+    def save_questions(self,question,description):
+        return my_database.insert_questions_database(question,description,self.date_added)
+
+        
             
     #fetch all questions
     def fetch_all_questions(self):
@@ -61,18 +60,35 @@ class Questions(object):
         message = my_database.delete_question(questionId)
         return message
 
+    #questions asked by a user
+    def questions_asked_user(self): 
+        return my_database.questions_asked_user_database()      
+
+
 
 class Answers(object):
 
     #save an answer
-    def save_answer(self,questionId,answer,userId):
-        message = my_database.save_answer(questionId,answer,userId)
+    def save_answer(self,questionId,answer):
+        message = my_database.save_answer(questionId,answer)
         return message
 
     #update answer
     def update_answer(self, questionId,answer,answerId):
         message = my_database.update_answer_database(questionId,answer,answerId)
         return message
+
+    #mark answer prefered 
+    def mark_prefered(self,answerId):
+        message = my_database.mark_prefered(answerId)
+        return message
+
+
+    #vote answer
+    def vote_answer(self,answerId,vote):
+        return my_database.vote_answer(answerId,vote)
+        
+
 
 
        
