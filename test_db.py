@@ -29,3 +29,34 @@ my_database = Database()
 #    print("answers = ", row[4])
 #    print("date_added = ", row[5]) 
 
+
+# questions = my_database.fetch_a_question_database(1)
+# answers = []
+# for row in questions:
+#     answers.append(row[2])
+
+# question_object = {
+#                    "question id": row[0],
+#                    "question": row[1],
+#                    "answers":answers
+# }
+   
+# import pdb; pdb.set_trace()
+
+
+        # self.cursor.execute(query,[questionId])
+        # results = self.cursor.fetchall()
+         
+        # questions = results
+        # answers = []
+        # for row in questions:
+        #     answers.append(row[2])
+
+        # question_object = {
+        #            "question id": row[0],
+        #            "question": row[1],
+        #            "answers":answers
+        # }
+
+
+
