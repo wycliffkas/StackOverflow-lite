@@ -4,6 +4,7 @@
 <a href="https://codeclimate.com/github/wycliffkas/StackOverflow-lite/maintainability"><img src="https://api.codeclimate.com/v1/badges/b424ab8cb9ea956652d1/maintainability" /></a>
 
 
+
 # StackOverflow-lite
 StackOverflow-lite is a platform where people can ask questions and provide answers.
 StackOverflow is a platform where students and professionals post queries and answer questions about programming. It is a platform to showcase their knowledge. The answers are upvoted based on its usefulness to the community. 
@@ -37,3 +38,4 @@ How to Run
 Step 1: install Postman on your machine
 Step 2: Go to this app's directory and run python app.py
 step 3: Run the API above in postman
+
