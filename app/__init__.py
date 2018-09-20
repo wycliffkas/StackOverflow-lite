@@ -1,7 +1,11 @@
 from flask import Flask
 
-# Initialize the app
 app = Flask(__name__)
-
-# Load the views
+    # app.config.from_object(DevelopmentConfig)
+    # app.config['JWT_SECRET_KEY'] = 'SECRET' 
+    # JWTManager(app)
 from app import views
+
+
+
+
