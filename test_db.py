@@ -1,9 +1,26 @@
-from database import Database
-my_database = Database()
+
+
+# import os
+# from urllib.parse import urlparse
+# # from database import Database
+# # my_database = Database()
+
+# db_url = os.environ.get('DATABASE_URL')
+# parsed_url = urlparse(db_url)
+# dbname = parsed_url.path[1:]
+# username = parsed_url.username
+# hostname = parsed_url.hostname
+# password = parsed_url.password
+# port = parsed_url.port
+
+# import pdb; pdb.set_trace()
+
+# print(db_url)
 
 # my_database.create_table_users()
 # my_database.create_table_questions()
 # my_database.create_table_answers()
+# my_database.create_table_comments()
 
 # my_database.insert_users_database('wycliff','wyco','w4wycliff@gmail.com','wyco123')
 # my_database.insert_questions_database('starting computer','how do i start a computer', 1 , "2018/08/29")

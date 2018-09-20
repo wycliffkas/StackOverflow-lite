@@ -1,27 +1,49 @@
-from flask import json,jsonify,request,Response
-from .models import Questions,Users,Answers
+from flask import Flask,make_response,json,jsonify,request,Response
+from app import app
+from .models import DatabaseModel
 from flask_jwt_extended import JWTManager,jwt_required,create_access_token,get_jwt_identity
 import datetime
-from app import app
+import os
 
-app.config['JWT_SECRET_KEY'] = 'stackoverflowbootcamp'  
+
+# database_url = os.environ.get('DATABASE_URI')
+
+# app = Flask(__name__)
+# ctx = app.app_context()
+# ctx.push()
+
+# with ctx:
+#     pass
+
+from instance.config import app_config
+
+app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET_KEY') 
 jwt = JWTManager(app)
-
-questions_obj = Questions()
-users_obj = Users()
-answers_obj = Answers()
+app.config.from_object(app_config[os.environ.get('APP_SETTING')])
+print(os.environ['APP_SETTING'])
+# app.config.from_object(app_config['testing'])
+# database_url = os.environ.get('DATABASE_URL')
+# db_connect = DatabaseModel(database_url)
+db_connect = DatabaseModel(app.config['DATABASE_URL'])
+# import pdb; pdb.set_trace()
 
 #registering new users
 @app.route('/stack_overflow/api/v1/auth/signup', methods=['POST'])
 def signup():
     request_data = request.get_json()
     if request_data.get('fullname')  and request_data.get('username') and request_data.get('email') and request_data.get('password'):
-        fullname = request_data.get('fullname') 
-        username = request_data.get('username') 
-        email = request_data.get('email')
-        password = request_data.get('password')
-        results = users_obj.save_users(fullname,username,email,password)
-        return jsonify(results),201
+        if len(request_data.get('password')) > 6:
+            fullname = request_data.get('fullname') 
+            username = request_data.get('username') 
+            email = request_data.get('email')
+            password = request_data.get('password')
+            response = db_connect.save_users_database(fullname,username,email,password)
+            return response
+        else:
+            response = {
+                'message': 'Password should have more than 6 characters'
+            }
+            return jsonify(response)
     else:
         bad_object = {
                 "error!": "all fields are required",
@@ -29,14 +51,16 @@ def signup():
                     "should have fields like {'fullname': 'wycliff','username':'wyco','email':wyco@gmail.com"
                     ",'password': 'wyco123'}"
         }
-        return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
+        return Response(json.dumps(bad_object), status=400, mimetype="application/json")
+
 #login users
 @app.route('/stack_overflow/api/v1/auth/login', methods=['POST'])
 def login():
     request_data = request.get_json()
     username = request_data.get('username') 
     password = request_data.get('password')
-    return users_obj.login_user(username, password)
+    results = db_connect.verify_login(username, password)
+    return results
 
 
 #adding a question
@@ -48,7 +72,7 @@ def add_question():
     if request_data.get('question')  and request_data.get('description'):
         question = request_data.get('question') 
         description = request_data.get('description') 
-        results = questions_obj.save_questions(question,description)
+        results = db_connect.insert_questions_database(question,description)
         return jsonify(results),201
     else:
         bad_object = {
@@ -60,15 +84,11 @@ def add_question():
         return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
 
         
-
 #fetch all questions
 @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
 @jwt_required
 def get_questions():
-    
-    if len(questions_obj.fetch_all_questions()) > 0:
-      return jsonify(questions_obj.fetch_all_questions()),200
-    return jsonify({"Message":"No questions added yet"}),404
+    return db_connect.fetch_questions_database()
     
 
 #fetch a question
@@ -76,14 +96,21 @@ def get_questions():
 @jwt_required
 def get_a_question(questionId):
     
-    results = questions_obj.fetch_a_question(questionId)
-    return jsonify(results),404
+    results = db_connect.fetch_a_question_database(questionId)
+    return results
 
 #delete a question
 @app.route('/stack_overflow/api/v1/questions/<questionId>', methods=['DELETE'])
 @jwt_required
 def delete_question(questionId): 
-    return jsonify(questions_obj.delete_question(questionId)),200 
+    return db_connect.delete_question(questionId) 
+
+# all questions asked by the user
+@app.route('/stack_overflow/api/v1/questions/user', methods=['GET'])
+@jwt_required
+def questions_asked_user():
+        results = db_connect.questions_asked_user_database()
+        return results   
 
 # Add an answer
 @app.route('/stack_overflow/api/v1/questions/<questionId>/answers', methods=['POST'])
@@ -92,12 +119,13 @@ def add_answer(questionId):
     request_data = request.get_json()
     if request_data:
         answer = request_data.get('answer')
-        return jsonify(answers_obj.save_answer(questionId,answer)),200    
+        results = db_connect.save_answer(questionId,answer)
+        return results
     else:
         bad_object = {
                 "error": "Invalid answer",
                 "help_string":
-                    "answer format should be {'answer': 'how to start a computer'}"
+                    "answer format should be {'answer': 'restart the computer'}"
             }
         return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
 
@@ -108,8 +136,8 @@ def add_answer(questionId):
 def update_answer(questionId,answerId):
     request_data = request.get_json()
     answer = request_data['answer']
-    results = answers_obj.update_answer(questionId,answer,answerId)
-    return jsonify(results),200
+    results = db_connect.update_answer_database(questionId,answer,answerId)
+    return results
 
 
 
@@ -122,35 +150,23 @@ def vote_answer(answerId):
 
     if request_data:
         vote = request_data['vote']
-        message = answers_obj.vote_answer(answerId,vote)
-        return jsonify(message),200    
+        results = db_connect.vote_answer(answerId,vote)
+        return results   
     else:
         bad_object = {
                 "error": "Invalid vote",
                 "help_string":
                     "vote format should be {'vote': 'yes'}"
             }
-        return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")  
-
-
-# all questions asked by the user
-@app.route('/stack_overflow/api/v1/questions/user', methods=['GET'])
-@jwt_required
-def questions_asked_user():
-        results = questions_obj.questions_asked_user()
-        return jsonify(results),200        
-
-
-
+        return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")      
 
 @app.errorhandler(400)
 def missing_values(e):
-    return jsonify("Invalid values posted, please make sure you have added all the fields"), 400
+    return jsonify({'message':'Invalid values posted, please make sure you have added all the fields'}), 400
 
 @app.errorhandler(404)
 def values_not_found(e):
-    return jsonify("Invalid values posted, please make sure the Id specified already exists in the database"), 404
-
+    return jsonify({'message':'Invalid values posted, please make sure the Id specified already exists in the database'}), 404
 
 
 
