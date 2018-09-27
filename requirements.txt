@@ -19,6 +19,7 @@ Flask-JWT-Extended==3.12.1
 Flask-Migrate==2.2.1
 Flask-RESTful==0.3.6
 Flask-SQLAlchemy==2.3.2
+gunicorn==19.9.0
 idna==2.7
 importscan==0.1
 inflection==0.3.1
