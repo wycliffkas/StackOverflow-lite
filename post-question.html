@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stack Overflow</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div id="logo">
+                    <h1>Stack Overflow</h1>
+                </div>
+                <a href="dashboard">Dashboard</a>
+                <a href="recently-asked-questions.html">Recently Asked Questions</a>
+                <a class="active" href="post-question.html">Post Question</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Wycliff Kasirye</button>
+                    <div class="dropdown-content">
+                        <a href="profile.html">Profile</a>
+                        <a href="#">Logout</a>
+                    </div>
+                </div>
+            </nav>
+
+
+        </div>
+    </header>
+
+    <section id="content">
+        <div class="container">
+            <div id="row">
+                <form id="add_question" method="POST">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" required>
+
+                    <label for="body">Body</label>
+                    <textarea cols="5" rows="8" id="description" required></textarea>
+                    <button class="submit-btn" type="submit">Post Your Question</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+<script type="text/javascript">
+document.getElementById('add_question').addEventListener("submit", signup)
+
+function signup(e){
+    e.preventDefault()
+    let title = document.getElementById("title").value
+    let description = document.getElementById("description").value
+    let token = localStorage.getItem("token")
+    if(token ==null){
+        window.location="index.html"
+    }
+    else{
+        fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions", {
+        method:'POST',
+        mode:'cors',
+        headers:{
+            'Accept':'application/json,text/plain,*/*',
+            'Content-type':'application/json',
+            'Authorization':'Bearer ' + token
+        },
+        body:JSON.stringify({question:title,description:description})
+        })
+        .then((response)=>response.json())
+        .then((data) => console.log(data))
+    }
+}        
+</script>
+</body>
+
+</html>

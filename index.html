@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stack Overflow</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+
+
+    <section id="content">
+        <div class="container">
+            <div id="row">
+                <div id="login-box">
+                    <h2>Login</h2>
+                    <div id="output"></div>                    
+                    <form id="login" autocomplete="off">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Username" autocomplete="nope" required>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="Password" autocomplete="new-password" required>
+                        <button class="submit-btn">Login</button>
+                        <button class="cancel-btn" type="reset">Cancel</button>
+                        <p>Need a new Account?
+                            <a href="sign-up.html">Sign Up</a></p>
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+<script type="text/javascript">
+document.getElementById('login').addEventListener("submit", login)
+
+function login(e){
+    e.preventDefault()
+    let username = document.getElementById("username").value
+    let password = document.getElementById("password").value
+    fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/auth/login", {
+        method:'POST',
+		mode:'cors',
+        headers:{
+            'Accept':'application/json,text/plain,*/*',
+            'Content-type':'application/json'
+        },
+        body:JSON.stringify({username:username,password:password})
+    })
+    .then((response)=>response.json())
+    .then((data) => {
+        Object.keys(data).forEach(function(key){
+            if(data['message'] == "User successfully logged in"){
+                localStorage.setItem("token", data['access_token'])
+                window.location="dashboard.html"
+            }
+            else{
+                results = `<p style='color:red'> ${data[key]} </p>`
+                document.getElementById('output').innerHTML = results
+            }
+        })
+    })
+}        
+</script>
+</body>
+
+</html>

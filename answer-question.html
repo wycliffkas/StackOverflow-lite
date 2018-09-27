@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stack Overflow</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+<header>
+    <div class="container">
+        <nav>
+            <div id="logo">
+                <h1>Stack Overflow</h1>
+            </div>
+            <a href="dashboard">Dashboard</a>
+            <a href="recently-asked-questions.html">Recently Asked Questions</a>
+            <a href="post-question.html">Post Question</a>
+            <div class="dropdown">
+                <button class="dropbtn">Wycliff Kasirye</button>
+                <div class="dropdown-content">
+                    <a href="profile.html">Profile</a>
+                    <a href="#">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+
+    </div>
+</header>
+
+<section id="content">
+    <div class="container">
+        <div id="row">
+            <div id="question">
+            </div>
+            <div>
+                <h3>Answer(1)</h3>
+                <p>The 404 code means that the server was unable to locate the files you were looking for via GET request.</p>
+                <hr>
+            </div>
+            </br>
+            <form id="add_answer" method="POST">
+                <label for="answer">Your Answer</label>
+                <textarea cols="5" rows="8" id="answer" required></textarea>
+                <button class="submit-btn" id="save_answer" type="submit">Post Your Answer</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+document.getElementById('add_answer').addEventListener('submit', saveAnswer)
+
+function getUrlVars() {
+    var vars = {};
+    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    vars[key] = value;
+    });
+    return vars;
+}
+var id = getUrlVars()["id"];
+
+let token = localStorage.getItem("token")
+if(token ==null){
+    window.location="index.html"
+}
+else{
+    fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions/"+id+"", {
+        method:'GET',
+        mode:'cors',
+        headers:{
+            'Accept':'application/json,text/plain,*/*',
+            'Content-type':'application/json',
+            'Authorization':'Bearer ' + token        
+        }
+    })
+    .then((response)=>response.json())
+    .then((data) => {   
+        let results=""    
+            results += `         
+            <h3>Question</h3>
+            <h4>${data.question}</h4>
+            <p>${data.description}</p>
+            <hr>
+            `
+        document.getElementById('question').innerHTML = results
+    })
+    
+}
+
+
+fetch("http://127.0.0.1:5000/stack_overflow/api/v1/questions/"+id+"", {
+    method:'GET',
+    mode:'cors',
+    headers:{
+        'Accept':'application/json,text/plain,*/*',
+        'Content-type':'application/json',
+        'Authorization':'Bearer ' + token        
+    }
+})
+.then((response)=>response.json())
+.then((data) => {   
+    let results=""    
+        results += `         
+        <h3>Question</h3>
+        <h4>${data.question}</h4>
+        <p>${data.description}</p>
+        <hr>
+        `
+    document.getElementById('question').innerHTML = results
+})
+
+function saveAnswer(e){
+    e.preventDefault()
+    let answer = document.getElementById("answer").value
+    fetch("http://127.0.0.1:5000/stack_overflow/api/v1/questions/"+id+"/answers", {
+        method:'POST',
+        mode:'cors',
+        headers:{
+            'Accept':'application/json,text/plain,*/*',
+            'Content-type':'application/json',
+            'Authorization':'Bearer ' + token              
+        },
+        body:JSON.stringify({answer:answer})
+    })    
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+
+}
+
+
+</script>
+</body>
+
+</html>

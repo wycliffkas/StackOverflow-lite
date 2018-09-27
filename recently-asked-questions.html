@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stack Overflow</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div id="logo">
+                    <h1>Stack Overflow</h1>
+                </div>
+                <a href="dashboard">Dashboard</a>
+                <a class="active" href="recently-asked-questions.html">Recently Asked Questions</a>
+                <a href="post-question.html">Post Question</a>
+                <div class="dropdown">
+                    <button class="dropbtn">Wycliff Kasirye</button>
+                    <div class="dropdown-content">
+                        <a href="profile.html">Profile</a>
+                        <a href="#">Logout</a>
+                    </div>
+                </div>
+            </nav>
+
+
+        </div>
+    </header>
+
+    <section id="content">
+        <div class="container">
+            <div id="row">
+
+            </div>
+        </div>
+    </section>
+<script type="text/javascript">
+fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions", {
+	method:'GET',
+	headers:{
+		'Accept':'application/json,text/plain,*/*',
+		'Content-type':'application/json',
+	}
+})
+.then((response)=>response.json())
+.then((data) => {
+	let results = ""
+	data.forEach(function(questions){
+		results += `
+		<div id="question">
+			<h4><a href="answer-question.html?id=${questions.questionId}">${questions.question}</a></h4>
+			<p>${questions.description}</p>
+			<hr>
+		</div>
+		`
+	});
+	// console.log(results)
+	document.getElementById('row').innerHTML = results
+})
+</script>
+
+</body>
+
+</html>

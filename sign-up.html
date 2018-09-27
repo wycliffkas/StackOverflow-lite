@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stack Overflow</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" />
+</head>
+
+<body>
+    <section id="content">
+        <div class="container">
+            <div id="row">
+                <div id="login-box">
+                    <h2>Sign Up</h2>
+                    <form id="signup" method="POST"> 
+                            <label for="username">Full Names</label>
+                            <input type="text" id="fullname" placeholder="fullnames" required>
+                            <label for="username">Username</label>
+                            <input type="text" id="username" placeholder="Username" required>
+                            <label for="username">Email</label>
+                            <input type="text" id="email" placeholder="Email" required>                            
+                            <label for="password">Password</label>
+                            <input type="password" id="password" placeholder="Password" required>
+                            <label for="password">Confirm Password</label>
+                            <input type="password" id="confirm_password" placeholder="Confirm Password" required>
+                            <button class="submit-btn" type="submit">Sign Up</button>
+                            <button class="cancel-btn" type="reset">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<script type="text/javascript">
+    document.getElementById('signup').addEventListener("submit", signup)
+    
+    function signup(e){
+        e.preventDefault()
+        let fullname = document.getElementById("fullname").value
+        let username = document.getElementById("username").value
+        let email = document.getElementById("email").value
+        let password = document.getElementById("password").value
+        let confirm_password = document.getElementById("confirm_password").value
+
+        if (password != confirm_password){
+            document.getElementById('output').innerHTML = "<p style='color:red'>The values entered in Password and Confrim Password dont match</p>"
+        }
+        else{
+            fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/auth/signup", {
+            method:'POST',
+            mode:'cors',
+            headers:{
+                'Accept':'application/json,text/plain,*/*',
+                'Content-type':'application/json'
+            },
+            body:JSON.stringify({fullname:fullname,username:username,email:email,password})
+            })
+            .then((response)=>response.json())
+            .then((data) => console.log(data))
+        }
+    }        
+</script>
+</body>
+
+</html>
