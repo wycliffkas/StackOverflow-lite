@@ -1,7 +1,8 @@
 from flask import Flask,make_response,json,jsonify,request,Response,render_template
 from app import app
 from .models import DatabaseModel
-from flask_jwt_extended import JWTManager,jwt_required,create_access_token,get_jwt_identity
+from flask_jwt_extended import (
+    JWTManager,jwt_required, create_access_token, get_jwt_identity)
 import datetime
 import os
 
