@@ -3,7 +3,7 @@ import psycopg2
 from passlib.hash import sha256_crypt
 from datetime import date
 from flask import jsonify
-from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
+# from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from urllib.parse import urlparse
 date_added = date.today().strftime("%d/%m/%Y")
 
@@ -97,9 +97,10 @@ class DatabaseModel:
         rows = self.cursor.fetchall()
         if rows:
             if sha256_crypt.verify(password, rows[0][1]) and rows[0][0] == username:
-                access_token = create_access_token(identity=username)
+                # access_token = create_access_token(identity=username)
 
-                results = {'access_token':access_token, 'message':'User successfully logged in'}
+                # results = {'access_token':access_token, 'message':'User successfully logged in'}
+                results = {'message':'User successfully logged in'}
                 
                 return jsonify(results),200
             return jsonify({'message':'Login failed,check your password'}),400
@@ -107,21 +108,22 @@ class DatabaseModel:
 
     #inserts questions into the database
     def insert_questions_database(self,question,description):
-        author = get_jwt_identity()
-        query = "INSERT INTO questions(question,description,author,date_added) VALUES (%s,%s,%s,%s)"   
-        self.cursor.execute(query,(question,description,author,date_added))
-        query2 = "SELECT * FROM questions ORDER BY questionid Desc Limit 1"
-        self.cursor.execute(query2)
-        questions = self.cursor.fetchall()
-        for question in questions:
-            questions_object = {
-                    'questionId': question[0],
-                    'question' : question[1],
-                    'description' : question[2],
-                    'author': question[3],
-                    'date_added': question[4]
-                }
-        return questions_object
+        pass
+        # author = get_jwt_identity()
+        # query = "INSERT INTO questions(question,description,author,date_added) VALUES (%s,%s,%s,%s)"   
+        # self.cursor.execute(query,(question,description,author,date_added))
+        # query2 = "SELECT * FROM questions ORDER BY questionid Desc Limit 1"
+        # self.cursor.execute(query2)
+        # questions = self.cursor.fetchall()
+        # for question in questions:
+        #     questions_object = {
+        #             'questionId': question[0],
+        #             'question' : question[1],
+        #             'description' : question[2],
+        #             'author': question[3],
+        #             'date_added': question[4]
+        #         }
+        # return questions_object
 
     #fetches all questions from the database
     def fetch_questions_database(self):
@@ -201,83 +203,86 @@ class DatabaseModel:
         self.cursor.execute(query,[questionId])
         rows = self.cursor.fetchall()
         if rows:
-            user = get_jwt_identity()
+            # user = get_jwt_identity()
             query = "SELECT author FROM questions where questionId = %s"
             self.cursor.execute(query,[questionId])
             question_author = self.cursor.fetchall()
             
 
-            if question_author[0][0] == user:
-                query = "DELETE FROM questions WHERE questionId = %s" 
-                self.cursor.execute(query,[questionId,])
-                return jsonify({'message':'question was succesfully deleted'}),201
-            else:
-                return jsonify({'message':'its only the questions author who can delete a question'}),400
+            # if question_author[0][0] == user:
+            #     query = "DELETE FROM questions WHERE questionId = %s" 
+            #     self.cursor.execute(query,[questionId,])
+            #     return jsonify({'message':'question was succesfully deleted'}),201
+            # else:
+            #     return jsonify({'message':'its only the questions author who can delete a question'}),400
         return jsonify({'message':'Question with the specified QuestionId doesnt exist in the database'}),404
 
     #questions asked by the user
     def questions_asked_user_database(self):
-        user = get_jwt_identity()
-        query = "SELECT questionid,question,description,author,date_added FROM questions WHERE author= %s"
-        self.cursor.execute(query,(user,))
-        questions = self.cursor.fetchall()
-        if questions:
+        pass
+        # user = get_jwt_identity()
+        # query = "SELECT questionid,question,description,author,date_added FROM questions WHERE author= %s"
+        # self.cursor.execute(query,(user,))
+        # questions = self.cursor.fetchall()
+        # if questions:
 
-            results = {}
-            for question in questions:
-                results[question[0]] = {
-                    'questionId': question[0],
-                    'question' : question[1],
-                    'description' : question[2],
-                    'userid': question[3],
-                    'date_added': question[4]
-                    }
+        #     results = {}
+        #     for question in questions:
+        #         results[question[0]] = {
+        #             'questionId': question[0],
+        #             'question' : question[1],
+        #             'description' : question[2],
+        #             'userid': question[3],
+        #             'date_added': question[4]
+        #             }
 
-            return jsonify(results),201
-        else:
-           return jsonify({'message':'No Questions asked by current user'}),404
+        #     return jsonify(results),201
+        # else:
+        #    return jsonify({'message':'No Questions asked by current user'}),404
            
 
     #saves answer into the database
     def save_answer(self,questionId,answer):
-        query = "SELECT questionId FROM questions where questionId = %s"
-        self.cursor.execute(query,[questionId])
-        question_with_id = self.cursor.fetchall()        
+        pass
+        # query = "SELECT questionId FROM questions where questionId = %s"
+        # self.cursor.execute(query,[questionId])
+        # question_with_id = self.cursor.fetchall()        
         
-        if question_with_id:
-            author = get_jwt_identity()                
-            query = ('''INSERT INTO answers (answer,questionId,author,date_added)VALUES (%s,%s,%s,%s)''')
-            self.cursor.execute(query,(answer,questionId,author,date_added))
+        # if question_with_id:
+        #     author = get_jwt_identity()                
+        #     query = ('''INSERT INTO answers (answer,questionId,author,date_added)VALUES (%s,%s,%s,%s)''')
+        #     self.cursor.execute(query,(answer,questionId,author,date_added))
             
-            query = ('''select answerid,questionid,answer,author,date_added from answers ORDER BY answerid DESC LIMIT 1''')
-            self.cursor.execute(query)
-            answers = self.cursor.fetchall()  
+        #     query = ('''select answerid,questionid,answer,author,date_added from answers ORDER BY answerid DESC LIMIT 1''')
+        #     self.cursor.execute(query)
+        #     answers = self.cursor.fetchall()  
 
-            response = {
-                'Answer Id': answers[0][0],
-                'Answer': answers[0][2],
-                'Question Id':answers[0][1],
-                'Author':answers[0][3],
-                'Date Added': answers[0][4],
-                'Message':"Answer successfully added"  
-            }
-            return jsonify(response),201
-        return jsonify({'message':'No question with the specified Question Id in the database'}),404
+        #     response = {
+        #         'Answer Id': answers[0][0],
+        #         'Answer': answers[0][2],
+        #         'Question Id':answers[0][1],
+        #         'Author':answers[0][3],
+        #         'Date Added': answers[0][4],
+        #         'Message':"Answer successfully added"  
+        #     }
+        #     return jsonify(response),201
+        # return jsonify({'message':'No question with the specified Question Id in the database'}),404
 
     #update answer in the database
     def update_answer_database(self,questionId,answer,answerId):
-        user = get_jwt_identity()
-        query = "SELECT author FROM answers where answerId = %s"
-        self.cursor.execute(query,[answerId])
-        answer_author = self.cursor.fetchall() 
-        if answer_author:
-            if answer_author[0][0] == user:
-                query = ('''UPDATE answers set answer = %s where answerid = %s''')
-                self.cursor.execute(query,(answer,answerId))
-                return jsonify({'Message':'answer successfully updated'}),201
-            else:
-                return jsonify({'Message':'Only author can update an answer'}),400
-        return jsonify({'message':'Wrong Id, please check the question or Answer ID'}),404
+        pass
+        # user = get_jwt_identity()
+        # query = "SELECT author FROM answers where answerId = %s"
+        # self.cursor.execute(query,[answerId])
+        # answer_author = self.cursor.fetchall() 
+        # if answer_author:
+        #     if answer_author[0][0] == user:
+        #         query = ('''UPDATE answers set answer = %s where answerid = %s''')
+        #         self.cursor.execute(query,(answer,answerId))
+        #         return jsonify({'Message':'answer successfully updated'}),201
+        #     else:
+        #         return jsonify({'Message':'Only author can update an answer'}),400
+        # return jsonify({'message':'Wrong Id, please check the question or Answer ID'}),404
 
         
 
