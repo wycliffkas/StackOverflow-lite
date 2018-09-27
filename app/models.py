@@ -3,6 +3,7 @@ import psycopg2
 from passlib.hash import sha256_crypt
 from datetime import date
 from flask import jsonify
+from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from urllib.parse import urlparse
 date_added = date.today().strftime("%d/%m/%Y")
 
@@ -96,7 +97,6 @@ class DatabaseModel:
         rows = self.cursor.fetchall()
         if rows:
             if sha256_crypt.verify(password, rows[0][1]) and rows[0][0] == username:
-                from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
                 access_token = create_access_token(identity=username)
 
                 results = {'access_token':access_token, 'message':'User successfully logged in'}
