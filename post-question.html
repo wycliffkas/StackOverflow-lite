@@ -66,7 +66,8 @@ function signup(e){
         },
         body:JSON.stringify({question:title,description:description})
         })
-        .then((response)=>response.json())
+        // .then((response) => response.json())
+        .then((response) => response.text())
         .then((data) => console.log(data))
     }
 }        
