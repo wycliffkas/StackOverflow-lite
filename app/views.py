@@ -18,8 +18,12 @@ import os
 
 from instance.config import app_config
 
-app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET_KEY') 
+# app.config['JWT_SECRET_KEY'] = os.environ.get('SECRET_KEY') 
+app.config['JWT_SECRET_KEY'] = "stackoverflowlite"
 jwt = JWTManager(app)
+
+app.config['SECRET_KEY'] = 'my-stackoverflow-key'
+
 app.config.from_object(app_config[os.environ.get('APP_SETTING')])
 print(os.environ['APP_SETTING'])
 # app.config.from_object(app_config['testing'])
