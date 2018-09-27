@@ -1,4 +1,4 @@
-from flask import Flask,make_response,json,jsonify,request,Response
+from flask import Flask,make_response,json,jsonify,request,Response,render_template
 from app import app
 from .models import DatabaseModel
 from flask_jwt_extended import JWTManager,jwt_required,create_access_token,get_jwt_identity
@@ -25,7 +25,6 @@ print(os.environ['APP_SETTING'])
 # database_url = os.environ.get('DATABASE_URL')
 # db_connect = DatabaseModel(database_url)
 db_connect = DatabaseModel(app.config['DATABASE_URL'])
-# import pdb; pdb.set_trace()
 
 #registering new users
 @app.route('/stack_overflow/api/v1/auth/signup', methods=['POST'])
@@ -41,7 +40,7 @@ def signup():
             return response
         else:
             response = {
-                'message': 'Password should have more than 6 characters'
+                'message': 'Passwords should have more than 6 characters'
             }
             return jsonify(response)
     else:
@@ -53,6 +52,7 @@ def signup():
         }
         return Response(json.dumps(bad_object), status=400, mimetype="application/json")
 
+    
 #login users
 @app.route('/stack_overflow/api/v1/auth/login', methods=['POST'])
 def login():
@@ -62,43 +62,45 @@ def login():
     results = db_connect.verify_login(username, password)
     return results
 
-
+   
 #adding a question
 @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
 @jwt_required
 def add_question():
-    request_data = request.get_json()
-    
-    if request_data.get('question')  and request_data.get('description'):
-        question = request_data.get('question') 
-        description = request_data.get('description') 
-        results = db_connect.insert_questions_database(question,description)
-        return jsonify(results),201
-    else:
-        bad_object = {
-                "error": "Invalid question",
-                "help_string":
-                    "question format should be {'question': 'how to start a computer',"
-                    "'description': 'where do i click to start a computer'}"
-            }
-        return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
+    if request.method == "POST":
+        request_data = request.get_json()
+        if request_data.get('question')  and request_data.get('description'):
+            question = request_data.get('question') 
+            description = request_data.get('description') 
+            results = db_connect.insert_questions_database(question,description)
+            return jsonify(results),201
+        else:
+            bad_object = {
+                    "error": "Invalid question",
+                    "help_string":
+                        "question format should be {'question': 'how to start a computer',"
+                        "'description': 'where do i click to start a computer'}"
+                }
+            return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
+    return render_template('post-questions.html')
+#display recently asked questions page
+@app.route('/stack_overflow/api/v1/recently-asked-questions')
+def display_all_questions():
+    return render_template('recently-asked-questions.html')
 
-        
 #fetch all questions
 @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
 @jwt_required
 def get_questions():
     return db_connect.fetch_questions_database()
     
-
 #fetch a question
-@app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
+@app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET','POST'])
 @jwt_required
 def get_a_question(questionId):
-    
     results = db_connect.fetch_a_question_database(questionId)
     return results
-
+    
 #delete a question
 @app.route('/stack_overflow/api/v1/questions/<questionId>', methods=['DELETE'])
 @jwt_required
@@ -129,7 +131,6 @@ def add_answer(questionId):
             }
         return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
 
-
 # update answer or accept an answer
 @app.route('/stack_overflow/api/v1/questions/<questionId>/answers/<answerId>', methods=['PUT'])
 @jwt_required
@@ -138,9 +139,6 @@ def update_answer(questionId,answerId):
     answer = request_data['answer']
     results = db_connect.update_answer_database(questionId,answer,answerId)
     return results
-
-
-
 
 # upvote and downvote answer
 @app.route('/stack_overflow/api/v1/answers/vote/<answerId>', methods=['POST'])
@@ -164,9 +162,9 @@ def vote_answer(answerId):
 def missing_values(e):
     return jsonify({'message':'Invalid values posted, please make sure you have added all the fields'}), 400
 
-@app.errorhandler(404)
-def values_not_found(e):
-    return jsonify({'message':'Invalid values posted, please make sure the Id specified already exists in the database'}), 404
+# @app.errorhandler(404)
+# def values_not_found(e):
+#     return jsonify({'message':'Invalid values posted, please make sure the Id specified already exists in the database'}), 404
 
 
 

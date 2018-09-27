@@ -62,24 +62,29 @@ class DatabaseModel:
         #create table comments
         self.cursor.execute(query4)
 
-    
-
     #inserts users into the database
     def save_users_database(self,fullname,username,email,password):
         query = "SELECT id FROM users WHERE username = %s"
         self.cursor.execute(query,[username])
         user_with_username_specified = self.cursor.fetchall()
         if user_with_username_specified:
-            return jsonify({'message':'pick another username, user already exits'}),400
+            return jsonify({'message':'Pick another username, user already exits'}),400
         else:
-            query = "INSERT INTO users(fullName,userName,email,password) \
-            VALUES (%s,%s,%s,%s)"  
+            query = "INSERT INTO users(fullName,userName,email,password) VALUES (%s,%s,%s,%s)"  
             new_password = sha256_crypt.hash(password) 
             self.cursor.execute(query,(fullname,username,email,new_password))
-            return jsonify({'message':'user registered successfully'}),201
-
-         
-
+            query2 = "select * from users ORDER BY id Desc LIMIT 1"
+            self.cursor.execute(query2)
+            users = self.cursor.fetchall()
+            for user in users:
+                user_object = {
+                        'Id': user[0],
+                        'fullname' : user[1],
+                        'username' : user[2],
+                        'email': user[3]
+                    }            
+            return jsonify(user_object),201
+            
     #verify login
     def verify_login(self,username,password):
         query = "SELECT username,password FROM users WHERE username = %s"
@@ -89,28 +94,28 @@ class DatabaseModel:
             if sha256_crypt.verify(password, rows[0][1]) and rows[0][0] == username:
                 access_token = create_access_token(identity=username)
 
-                results = {'access_token':access_token,'message':'user successfully logged in'}
+                results = {'access_token':access_token, 'message':'User successfully logged in'}
                 
                 return jsonify(results),200
             return jsonify({'message':'Login failed,check your password'}),400
-        return jsonify({'message':'user with the above username doesnt exist in the database'}),400
-
-
-
+        return jsonify({'message':'User with the above username doesnt exist in the database'}),400
 
     #inserts questions into the database
     def insert_questions_database(self,question,description):
         author = get_jwt_identity()
-        query = "INSERT INTO questions(question,description,author,date_added) \
-        VALUES (%s,%s,%s,%s)"   
+        query = "INSERT INTO questions(question,description,author,date_added) VALUES (%s,%s,%s,%s)"   
         self.cursor.execute(query,(question,description,author,date_added))
-
-        questions_object = {
-            'question':question,
-            'description': description,
-            'author': author,
-            'date_added':date_added
-            }
+        query2 = "SELECT * FROM questions ORDER BY questionid Desc Limit 1"
+        self.cursor.execute(query2)
+        questions = self.cursor.fetchall()
+        for question in questions:
+            questions_object = {
+                    'questionId': question[0],
+                    'question' : question[1],
+                    'description' : question[2],
+                    'author': question[3],
+                    'date_added': question[4]
+                }
         return questions_object
 
     #fetches all questions from the database
@@ -119,15 +124,16 @@ class DatabaseModel:
         self.cursor.execute(query)
         questions = self.cursor.fetchall()
         if questions:
-            results = {}
+            results = []
             for question in questions:
-                results[question[0]] = {
+                question = {
                     'questionId': question[0],
                     'question' : question[1],
                     'description' : question[2],
                     'author': question[3],
                     'date_added': question[4]
                     }
+                results.append(question)
 
             return jsonify(results),201
         else:
