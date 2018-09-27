@@ -3,7 +3,7 @@ import psycopg2
 from passlib.hash import sha256_crypt
 from datetime import date
 from flask import jsonify
-from flask_jwt_extended import JWTManager,jwt_required,create_access_token,get_jwt_identity
+from flask_jwt_extended import (JWTManager, jwt_required, create_access_token, get_jwt_identity)
 from urllib.parse import urlparse
 date_added = date.today().strftime("%d/%m/%Y")
 # import os
