@@ -73,26 +73,22 @@ def login():
 @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
 @jwt_required
 def add_question():
-    if request.method == "POST":
-        request_data = request.get_json()
-        if request_data.get('question')  and request_data.get('description'):
-            question = request_data.get('question') 
-            description = request_data.get('description') 
-            results = db_connect.insert_questions_database(question,description)
-            return jsonify(results),201
-        else:
-            bad_object = {
-                    "error": "Invalid question",
-                    "help_string":
-                        "question format should be {'question': 'how to start a computer',"
-                        "'description': 'where do i click to start a computer'}"
-                }
-            return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
-    return render_template('post-questions.html')
-#display recently asked questions page
-@app.route('/stack_overflow/api/v1/recently-asked-questions')
-def display_all_questions():
-    return render_template('recently-asked-questions.html')
+    request_data = request.get_json()
+    if request_data.get('question')  and request_data.get('description'):
+        question = request_data.get('question') 
+        description = request_data.get('description') 
+        results = db_connect.insert_questions_database(question,description)
+        return jsonify(results),201
+    else:
+        bad_object = {
+                "error": "Invalid question",
+                "help_string":
+                    "question format should be {'question': 'how to start a computer',"
+                    "'description': 'where do i click to start a computer'}"
+            }
+        return Response(json.dumps(bad_object), status=400, mimetype="appliation/json")
+
+
 
 #fetch all questions
 @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
