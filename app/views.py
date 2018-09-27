@@ -24,8 +24,8 @@ jwt = JWTManager(app)
 
 app.config['SECRET_KEY'] = 'my-stackoverflow-key'
 
-app.config.from_object(app_config[os.environ.get('APP_SETTING')])
-print(os.environ['APP_SETTING'])
+# app.config.from_object(app_config[os.environ.get('APP_SETTING')])
+
 # app.config.from_object(app_config['testing'])
 # database_url = os.environ.get('DATABASE_URL')
 # db_connect = DatabaseModel(database_url)
