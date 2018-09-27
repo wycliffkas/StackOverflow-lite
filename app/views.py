@@ -29,7 +29,8 @@ app.config['SECRET_KEY'] = 'my-stackoverflow-key'
 # app.config.from_object(app_config['testing'])
 # database_url = os.environ.get('DATABASE_URL')
 # db_connect = DatabaseModel(database_url)
-db_connect = DatabaseModel(app.config['DATABASE_URL'])
+# db_connect = DatabaseModel(app.config['DATABASE_URL'])
+db_connect = DatabaseModel('postgres://dofplzajzoyfvj:b6c3c11b2bff17446997688d0c003e87e6b49b2b569ce5d4b533ca03da4f4b4d@ec2-54-225-97-112.compute-1.amazonaws.com:5432/d6vclujglsl826')
 
 #registering new users
 @app.route('/stack_overflow/api/v1/auth/signup', methods=['POST'])
