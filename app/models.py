@@ -12,17 +12,17 @@ date_added = date.today().strftime("%d/%m/%Y")
 class DatabaseModel:
     def __init__(self, database_url):
         """database connection"""
-        # parsed_url = postgres://vfrocsnlqepiuy:5f91140a1e8a258608fb65ebc6065718fa80867a763c68733774a1df91735551@ec2-174-129-18-98.compute-1.amazonaws.com:5432/d2abra34kiqavt
-        parsed_url = urlparse(database_url)
-        database = parsed_url.path[1:]
-        username = parsed_url.username
-        hostname = parsed_url.hostname
-        password = parsed_url.password
-        port = parsed_url.port
-        # import pdb; pdb.set_trace()
+        # # parsed_url = postgres://vfrocsnlqepiuy:5f91140a1e8a258608fb65ebc6065718fa80867a763c68733774a1df91735551@ec2-174-129-18-98.compute-1.amazonaws.com:5432/d2abra34kiqavt
+        # parsed_url = urlparse(database_url)
+        # database = parsed_url.path[1:]
+        # username = parsed_url.username
+        # hostname = parsed_url.hostname
+        # password = parsed_url.password
+        # port = parsed_url.port
+        # # import pdb; pdb.set_trace()
         
-        self.connection = psycopg2.connect(database=database,user=username,password=password,host=hostname,port=port)
-        # self.connection = psycopg2.connect("postgres://vfrocsnlqepiuy:5f91140a1e8a258608fb65ebc6065718fa80867a763c68733774a1df91735551@ec2-174-129-18-98.compute-1.amazonaws.com:5432/d2abra34kiqavt")
+        # self.connection = psycopg2.connect(database=database,user=username,password=password,host=hostname,port=port)
+        self.connection = psycopg2.connect("postgres://vfrocsnlqepiuy:5f91140a1e8a258608fb65ebc6065718fa80867a763c68733774a1df91735551@ec2-174-129-18-98.compute-1.amazonaws.com:5432/d2abra34kiqavt")
         self.cursor = self.connection.cursor()
         self.connection.autocommit = True
 
