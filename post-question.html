@@ -46,9 +46,9 @@
     </section>
 
 <script type="text/javascript">
-document.getElementById('add_question').addEventListener("submit", signup)
+document.getElementById('add_question').addEventListener("submit", add_question)
 
-function signup(e){
+function add_question(e){
     e.preventDefault()
     let title = document.getElementById("title").value
     let description = document.getElementById("description").value
@@ -67,9 +67,10 @@ function signup(e){
         },
         body:JSON.stringify({question:title, description:description})
         })
-        .then((response)=>response.text())
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error))
+        .then((response)=>console.log(response))
+        // .then((response)=>response.text())
+        // .then((data) => console.log(data))
+        // .catch((error) => console.error(error))
     }
 }        
 </script>
