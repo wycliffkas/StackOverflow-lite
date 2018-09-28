@@ -108,17 +108,24 @@ class DatabaseModel:
         author = get_jwt_identity()
         query = "INSERT INTO questions(question,description,author,date_added) VALUES (%s,%s,%s,%s)"   
         self.cursor.execute(query,(question,description,author,date_added))
-        query2 = "SELECT * FROM questions ORDER BY questionid Desc Limit 1"
-        self.cursor.execute(query2)
-        questions = self.cursor.fetchall()
-        for question in questions:
-            questions_object = {
-                    'questionId': question[0],
-                    'question' : question[1],
-                    'description' : question[2],
-                    'author': question[3],
-                    'date_added': question[4]
-                }
+        # query2 = "SELECT * FROM questions ORDER BY questionid Desc Limit 1"
+        # self.cursor.execute(query2)
+        # questions = self.cursor.fetchall()
+        # for question in questions:
+        #     questions_object = {
+        #             'questionId': question[0],
+        #             'question' : question[1],
+        #             'description' : question[2],
+        #             'author': question[3],
+        #             'date_added': question[4]
+        #         }
+        questions_object = {
+                'questionId': 1,
+                'question' : question,
+                'description' : description,
+                'author': author,
+                'date_added': date_added
+            }                
         return questions_object
 
     #fetches all questions from the database
