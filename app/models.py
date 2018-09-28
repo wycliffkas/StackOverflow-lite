@@ -119,14 +119,15 @@ class DatabaseModel:
         #             'author': question[3],
         #             'date_added': question[4]
         #         }
-        questions_object = {
-                'questionId': 1,
-                'question' : question,
-                'description' : description,
-                'author': author,
-                'date_added': date_added
-            }                
-        return questions_object
+        # questions_object = {
+        #         'questionId': 1,
+        #         'question' : question,
+        #         'description' : description,
+        #         'author': author,
+        #         'date_added': date_added
+        #     }                
+        # return questions_object
+        jsonify({'message':'question added'}),201
 
     #fetches all questions from the database
     def fetch_questions_database(self):

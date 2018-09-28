@@ -78,7 +78,7 @@ def add_question():
         question = request_data.get('question') 
         description = request_data.get('description') 
         results = db_connect.insert_questions_database(question,description)
-        return jsonify(results),201
+        return results
     else:
         bad_object = {
                 "error": "Invalid question",
