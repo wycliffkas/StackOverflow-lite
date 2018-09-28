@@ -71,7 +71,7 @@ def login():
    
 #adding a question
 @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
-@jwt_required
+# @jwt_required
 def add_question():
     request_data = request.get_json()
     if request_data.get('question')  and request_data.get('description'):
