@@ -127,7 +127,7 @@ class DatabaseModel:
         #         'date_added': date_added
         #     }                
         # return questions_object
-        jsonify({'message':'question added'}),201
+        return jsonify({'message':'question added'}),201
 
     #fetches all questions from the database
     def fetch_questions_database(self):
