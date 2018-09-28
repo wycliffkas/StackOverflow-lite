@@ -65,9 +65,9 @@ function signup(e){
             'Content-type':'application/json',
             'Authorization':'Bearer ' + token
         },
-        body:JSON.stringify({question:title,description:description})
+        body:JSON.stringify({question:title, description:description})
         })
-        .then((response) => response.json())
+        .then((response)=>response.text())
         .then((data) => console.log(data))
         .catch((error) => console.error(error))
     }
