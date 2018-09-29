@@ -22,8 +22,8 @@ class DatabaseModel:
         # port = parsed_url.port
         # # import pdb; pdb.set_trace()
         
-        # self.connection = psycopg2.connect("postgresql://postgres:wyco2018!@localhost:5432/stackoverflow")
-        self.connection = psycopg2.connect("postgres://dofplzajzoyfvj:b6c3c11b2bff17446997688d0c003e87e6b49b2b569ce5d4b533ca03da4f4b4d@ec2-54-225-97-112.compute-1.amazonaws.com:5432/d6vclujglsl826")
+        self.connection = psycopg2.connect("postgresql://postgres:wyco2018!@localhost:5432/stackoverflow")
+        # self.connection = psycopg2.connect("postgres://dofplzajzoyfvj:b6c3c11b2bff17446997688d0c003e87e6b49b2b569ce5d4b533ca03da4f4b4d@ec2-54-225-97-112.compute-1.amazonaws.com:5432/d6vclujglsl826")
         self.cursor = self.connection.cursor()
         self.connection.autocommit = True
 
@@ -164,13 +164,10 @@ class DatabaseModel:
                 questions = self.cursor.fetchall()
 
                 answers = []
-                answer = {}
                 
                 for row in questions:
-                    answer.update({'answer':row[2]})
-                    answer.update({'status':row[3]})
-                    answer.update({'vote':row[4]})
-                    answers.append(answer)
+                    answers.append({'answer':row[2],'status':row[3],'vote':row[4]})
+                    
                 question_object = {
                         "question id": questions[0][0],
                         "question": questions[0][1],
