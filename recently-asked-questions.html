@@ -38,6 +38,7 @@
         </div>
     </section>
 <script type="text/javascript">
+let token = localStorage.getItem("token")
 fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions", {
 	method:'GET',
     mode: 'cors',
