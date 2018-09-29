@@ -91,7 +91,7 @@ else{
 }
 
 
-fetch("http://127.0.0.1:5000/stack_overflow/api/v1/questions/"+id+"", {
+fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions/"+id+"", {
     method:'GET',
     mode:'cors',
     headers:{
@@ -115,7 +115,7 @@ fetch("http://127.0.0.1:5000/stack_overflow/api/v1/questions/"+id+"", {
 function saveAnswer(e){
     e.preventDefault()
     let answer = document.getElementById("answer").value
-    fetch("http://127.0.0.1:5000/stack_overflow/api/v1/questions/"+id+"/answers", {
+    fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions/"+id+"/answers", {
         method:'POST',
         mode:'cors',
         headers:{
