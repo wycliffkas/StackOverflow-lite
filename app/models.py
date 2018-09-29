@@ -5,8 +5,8 @@ import datetime
 from flask import jsonify
 from flask_jwt_extended import JWTManager, jwt_required,create_access_token,get_jwt_identity
 from urllib.parse import urlparse
-current_date = datetime.date.today()
-date_added = current_date.strftime("%d-%m-%Y")
+date_added = datetime.date.today()
+# date_added = current_date.strftime("%d-%m-%Y")
 # import os
 # database_url = os.environ.get('DATABASE_URL')
 
