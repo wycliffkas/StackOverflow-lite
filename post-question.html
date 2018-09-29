@@ -67,10 +67,9 @@ function add_question(e){
         },
         body:JSON.stringify({question:title, description:description})
         })
-        .then((response)=>console.log(response))
-        // .then((response)=>response.text())
-        // .then((data) => console.log(data))
-        // .catch((error) => console.error(error))
+        .then((response)=>response.text())
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error))
     }
 }        
 </script>
