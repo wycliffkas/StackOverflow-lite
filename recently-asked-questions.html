@@ -40,9 +40,11 @@
 <script type="text/javascript">
 fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions", {
 	method:'GET',
+    mode: 'cors',
 	headers:{
 		'Accept':'application/json,text/plain,*/*',
 		'Content-type':'application/json',
+        'Authorization':'Bearer ' + token
 	}
 })
 .then((response)=>response.json())
