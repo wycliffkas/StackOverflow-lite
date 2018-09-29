@@ -1,11 +1,12 @@
 from flask import Response,json
 import psycopg2
 from passlib.hash import sha256_crypt
-from datetime import date
+import datetime
 from flask import jsonify
 from flask_jwt_extended import JWTManager, jwt_required,create_access_token,get_jwt_identity
 from urllib.parse import urlparse
-date_added = date.today().strftime("%d/%m/%Y")
+current_date = datetime.date.today()
+date_added = current_date.strftime("%d-%m-%Y")
 # import os
 # database_url = os.environ.get('DATABASE_URL')
 
@@ -21,8 +22,8 @@ class DatabaseModel:
         # port = parsed_url.port
         # # import pdb; pdb.set_trace()
         
-        # self.connection = psycopg2.connect("postgresql://postgres:wyco2018!@localhost:5432/stackoverflow")
-        self.connection = psycopg2.connect("postgres://dofplzajzoyfvj:b6c3c11b2bff17446997688d0c003e87e6b49b2b569ce5d4b533ca03da4f4b4d@ec2-54-225-97-112.compute-1.amazonaws.com:5432/d6vclujglsl826")
+        self.connection = psycopg2.connect("postgresql://postgres:wyco2018!@localhost:5432/stackoverflow")
+        # self.connection = psycopg2.connect("postgres://dofplzajzoyfvj:b6c3c11b2bff17446997688d0c003e87e6b49b2b569ce5d4b533ca03da4f4b4d@ec2-54-225-97-112.compute-1.amazonaws.com:5432/d6vclujglsl826")
         self.cursor = self.connection.cursor()
         self.connection.autocommit = True
 
@@ -106,28 +107,21 @@ class DatabaseModel:
     #inserts questions into the database
     def insert_questions_database(self,question,description):
         author = get_jwt_identity()
+
         query = "INSERT INTO questions(question,description,author,date_added) VALUES (%s,%s,%s,%s)"   
         self.cursor.execute(query,(question,description,author,date_added))
-        # query2 = "SELECT * FROM questions ORDER BY questionid Desc Limit 1"
-        # self.cursor.execute(query2)
-        # questions = self.cursor.fetchall()
-        # for question in questions:
-        #     questions_object = {
-        #             'questionId': question[0],
-        #             'question' : question[1],
-        #             'description' : question[2],
-        #             'author': question[3],
-        #             'date_added': question[4]
-        #         }
-        # questions_object = {
-        #         'questionId': 1,
-        #         'question' : question,
-        #         'description' : description,
-        #         'author': author,
-        #         'date_added': date_added
-        #     }                
-        # return questions_object
-        return jsonify({'message':'question added'}),201
+
+        query2 = "SELECT questionId FROM questions ORDER BY questionid Desc Limit 1"
+        self.cursor.execute(query2)
+        questionId = self.cursor.fetchall()
+        questions_object = {
+                'questionId': questionId[0][0],
+                'question' : question,
+                'description' : description,
+                'author': author,
+                'date_added': date_added
+            }
+        return jsonify(questions_object),201
 
     #fetches all questions from the database
     def fetch_questions_database(self):
@@ -362,24 +356,7 @@ class DatabaseModel:
         self.cursor.execute("DROP TABLE questions;")
 
         
-# class TearDownDatabase:
-#     @classmethod
-#     def tear_down(cls, database_url):
-#         parsed_url = urlparse(database_url)
-#         database = parsed_url.path[1:]
-#         username = parsed_url.username
-#         hostname = parsed_url.hostname
-#         password = parsed_url.password
-#         port = parsed_url.port
-#         connection = psycopg2.connect(database=database,user=username,password=password,host=hostname,port=port)
-#         cursor = connection.cursor()
-#         connection.autocommit = True
-
-#         # cursor.execute("SET FOREIGN_KEY_CHECKS=0")
-#         cursor.execute("DELETE FROM users;")
-#         cursor.execute("DELETE FROM answers;")
-#         cursor.execute("DELETE FROM questions;")
-#         # cursor.execute("SET FOREIGN_KEY_CHECKS=1")        
+       
 
 
 

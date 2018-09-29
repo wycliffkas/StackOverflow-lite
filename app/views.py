@@ -3,7 +3,6 @@ from app import app
 from .models import DatabaseModel
 from flask_jwt_extended import (
     JWTManager,jwt_required, create_access_token, get_jwt_identity)
-import datetime
 import os
 
 
@@ -71,10 +70,10 @@ def login():
    
 #adding a question
 @app.route('/stack_overflow/api/v1/questions', methods=['POST'])
-# @jwt_required
+@jwt_required
 def add_question():
     request_data = request.get_json()
-    if request_data.get('question')  and request_data.get('description'):
+    if request_data.get('question') and request_data.get('description'):
         question = request_data.get('question') 
         description = request_data.get('description') 
         results = db_connect.insert_questions_database(question,description)
