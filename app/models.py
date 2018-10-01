@@ -22,8 +22,8 @@ class DatabaseModel:
         # port = parsed_url.port
         # # import pdb; pdb.set_trace()
         
-        self.connection = psycopg2.connect("postgresql://postgres:wyco2018!@localhost:5432/stackoverflow")
-        # self.connection = psycopg2.connect("postgres://dofplzajzoyfvj:b6c3c11b2bff17446997688d0c003e87e6b49b2b569ce5d4b533ca03da4f4b4d@ec2-54-225-97-112.compute-1.amazonaws.com:5432/d6vclujglsl826")
+        # self.connection = psycopg2.connect("postgresql://postgres:wyco2018!@localhost:5432/stackoverflow")
+        self.connection = psycopg2.connect("postgres://dofplzajzoyfvj:b6c3c11b2bff17446997688d0c003e87e6b49b2b569ce5d4b533ca03da4f4b4d@ec2-54-225-97-112.compute-1.amazonaws.com:5432/d6vclujglsl826")
         self.cursor = self.connection.cursor()
         self.connection.autocommit = True
 
@@ -85,7 +85,8 @@ class DatabaseModel:
                         'Id': user[0],
                         'fullname' : user[1],
                         'username' : user[2],
-                        'email': user[3]
+                        'email': user[3],
+                        'message':'User Successfully Added'
                     }            
             return jsonify(user_object),201
             
@@ -101,8 +102,8 @@ class DatabaseModel:
                 results = {'access_token':access_token, 'message':'User successfully logged in'}
                 
                 return jsonify(results),200
-            return jsonify({'message':'Login failed,check your password'}),400
-        return jsonify({'message':'User with the above username doesnt exist in the database'}),400
+            return jsonify({'message':'Wrong Login Details'}),400
+        return jsonify({'message':'Wrong Login Details'}),400
 
     #inserts questions into the database
     def insert_questions_database(self,question,description):
@@ -119,7 +120,8 @@ class DatabaseModel:
                 'question' : question,
                 'description' : description,
                 'author': author,
-                'date_added': date_added
+                'date_added': date_added,
+                'message':'Question successfully Added'
             }
         return jsonify(questions_object),201
 
@@ -203,13 +205,12 @@ class DatabaseModel:
             self.cursor.execute(query,[questionId])
             question_author = self.cursor.fetchall()
             
-
             if question_author[0][0] == user:
                 query = "DELETE FROM questions WHERE questionId = %s" 
                 self.cursor.execute(query,[questionId,])
-                return jsonify({'message':'question was succesfully deleted'}),201
+                return jsonify({'message':'Question was succesfully deleted'}),201
             else:
-                return jsonify({'message':'its only the questions author who can delete a question'}),400
+                return jsonify({'message':'Only a Question Author can delete a Question'}),400
         return jsonify({'message':'Question with the specified QuestionId doesnt exist in the database'}),404
 
     #questions asked by the user
