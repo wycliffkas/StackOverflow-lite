@@ -5,6 +5,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Stack Overflow</title>
     <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <script src="javascript/script.js"></script>
 </head>
 
 <body>
@@ -14,7 +15,7 @@
                 <div id="logo">
                     <h1>Stack Overflow</h1>
                 </div>
-                <a href="dashboard">Dashboard</a>
+                <a href="dashboard.html">Dashboard</a>
                 <a href="recently-asked-questions.html">Recently Asked Questions</a>
                 <a class="active" href="post-question.html">Post Question</a>
                 <div class="dropdown">
@@ -33,6 +34,8 @@
     <section id="content">
         <div class="container">
             <div id="row">
+                <div id="info-box"></div>
+                <br/>
                 <form id="add_question" method="POST">
                     <label for="title">Title</label>
                     <input type="text" id="title" required>
@@ -46,33 +49,8 @@
     </section>
 
 <script type="text/javascript">
-document.getElementById('add_question').addEventListener("submit", add_question)
-
-function add_question(e){
-    e.preventDefault()
-    let title = document.getElementById("title").value
-    let description = document.getElementById("description").value
-    let token = localStorage.getItem("token")
-    if(token ==null){
-        window.location="index.html"
-    }
-    else{
-        fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions", {
-        method:'POST',
-        mode:'cors',
-        headers:{
-            'Accept':'application/json,text/plain,*/*',
-            'Content-type':'application/json',
-            'Authorization':'Bearer ' + token
-        },
-        body:JSON.stringify({question:title, description:description})
-        })
-        .then((response)=>response.json())
-        .then((data) => console.log(data))
-        .catch((error) => console.error(error))
-    }
-}        
+document.getElementById('add_question').addEventListener("submit", add_question)      
 </script>
-</body>
 
+</body>
 </html>

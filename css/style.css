@@ -64,6 +64,9 @@ nav a:hover, .dropdown:hover , .dropdown-content a:hover, .active{
     color: #1984D1;
 }
 
+a:link{
+    text-decoration: none;
+}
 
 .dropdown-content {
     float: right;
@@ -180,5 +183,22 @@ label{
     font-weight: bold;
 }
 
+#warning {
+    background-color: #F2DEDE;
+    color: #A94442;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 80px;
+}
+
+#success {
+    background-color:#DFF0D8;
+    color:#3C763D;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 80px;
+}
 
 

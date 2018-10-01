@@ -5,6 +5,7 @@
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <title>Stack Overflow</title>
     <link rel="stylesheet" href="css/style.css" type="text/css" />
+    <script src="javascript/script.js"></script>
 </head>
 
 <body>
@@ -14,7 +15,7 @@
                 <div id="logo">
                     <h1>Stack Overflow</h1>
                 </div>
-                <a href="dashboard">Dashboard</a>
+                <a href="dashboard.html">Dashboard</a>
                 <a class="active" href="recently-asked-questions.html">Recently Asked Questions</a>
                 <a href="post-question.html">Post Question</a>
                 <div class="dropdown">
@@ -32,13 +33,11 @@
 
     <section id="content">
         <div class="container">
-            <div id="row">
-
-            </div>
+            <div id="info-box"></div>
+            <div id="results"></div>
         </div>
     </section>
 <script type="text/javascript">
-let token = localStorage.getItem("token")
 fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions", {
 	method:'GET',
     mode: 'cors',
@@ -56,13 +55,16 @@ fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/questions", 
 		<div id="question">
 			<h4><a href="answer-question.html?id=${questions.questionId}">${questions.question}</a></h4>
 			<p>${questions.description}</p>
+            <a href="answer-question.html?id=${questions.questionId}">More Info</a> | 
+            <a href="#" onclick="deleteQuestion(${questions.questionId})">Delete</a>           
 			<hr>
 		</div>
 		`
 	});
-	// console.log(results)
-	document.getElementById('row').innerHTML = results
+	document.getElementById('results').innerHTML = results
 })
+
+
 </script>
 
 </body>
