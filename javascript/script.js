@@ -126,3 +126,31 @@ function saveAnswer(e){
     .then((data) => console.log(data))
 
 }
+
+function login(e){
+    e.preventDefault()
+    let username = document.getElementById("username").value
+    let password = document.getElementById("password").value
+    fetch("https://stack-challenge3.herokuapp.com/stack_overflow/api/v1/auth/login", {
+        method:'POST',
+		mode:'cors',
+        headers:{
+            'Accept':'application/json,text/plain,*/*',
+            'Content-type':'application/json'
+        },
+        body:JSON.stringify({username:username,password:password})
+    })
+    .then((response)=>response.json())
+    .then((data) => {
+        Object.keys(data).forEach(function(key){
+            if(data['message'] == "User successfully logged in"){
+                localStorage.setItem("token", data['access_token'])
+                window.location="dashboard.html"
+            }
+            else{
+                results = `<div id="warning">${data[key]} </div>`
+                document.getElementById('output').innerHTML = results
+            }
+        })
+    })
+}     
