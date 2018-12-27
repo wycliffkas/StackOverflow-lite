@@ -86,7 +86,6 @@ def add_question():
         
 #fetch all questions
 @app.route('/stack_overflow/api/v1/questions', methods=['GET'])
-@jwt_required
 def get_questions():
     return db_connect.fetch_questions_database()
     
