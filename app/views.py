@@ -90,7 +90,7 @@ def add_question():
 
 
 #fetch all questions
-@app.route('/stack_overflow/api/v1/questions', methods=['GET'])
+@app.route('/stack_overflow/api/v1/questionsxxxx', methods=['GET'])
 def get_questions():
     return db_connect.fetch_questions_database()
     
