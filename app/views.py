@@ -92,7 +92,6 @@ def get_questions():
 
 #fetch a question
 @app.route('/stack_overflow/api/v1/questions/<int:questionId>', methods=['GET'])
-@jwt_required
 def get_a_question(questionId):
     
     results = db_connect.fetch_a_question_database(questionId)
